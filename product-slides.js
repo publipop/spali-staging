@@ -4,6 +4,8 @@ const IMAGES = Object.freeze({
   tops: { rojo: 'assets/top-rojo.jpg', negro: 'assets/top-negro.jpg' },
   shorts: { negro: 'assets/short-negro.jpg', rojo: 'assets/short-rojo.jpg' },
   mallas: { negro: 'assets/malla-negra.jpg', gris: 'assets/malla-gris.jpg' },
+  chaquetas: { crema: 'assets/chaqueta-crema.jpg', negro: 'assets/chaqueta-negra.jpg' },
+  sudaderas: { negro: 'assets/sudadera-negra.jpg', crema: 'assets/sudadera-crema.jpg' },
 });
 const mounted = new WeakMap();
 const esc = (value = '') => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));

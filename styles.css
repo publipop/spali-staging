@@ -1035,6 +1035,17 @@ html[data-style='recortes'] .hero-word img { filter: invert(23%) sepia(84%) satu
   .search-suggestions a { font-size: 10px; }
 }
 
+/* Mobile purchase flow: touch targets and the total before entering details. */
+@media (width < 900px) {
+  .checkout-layout { grid-template-columns: minmax(0, 1fr); }
+  .checkout-layout > .summary { order: -1; position: static; }
+  .qty-control, .product-actions .qty-control, .cart-item-details .qty-control { min-width: 122px; }
+  .qty-control button, .product-actions .qty-control button, .cart-item-details .qty-control button { width: 44px; min-width: 44px; min-height: 44px; }
+  .cart-item-details .qty-control { height: 46px; }
+  .qty-control input { font-size: 16px; }
+  .remove-item { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; margin-top: 10px; padding: 8px 6px; font-size: 11px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
