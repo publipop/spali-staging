@@ -115,7 +115,7 @@ export const PRODUCTS = freeze([
   {
     id: 'malla-entreno-01', name: 'Malla Entreno 01', line: 'entrenamiento',
     gender: 'mujer', category: 'mallas', price: 34.9,
-    image: 'assets/malla-negra.jpg', colors: [black], sizes: allSizes,
+    image: 'assets/malla-negra.jpg', colors: [black, { name: 'Gris', hex: '#777a7c' }], sizes: allSizes,
     description: 'Una malla para acompañar el conjunto Entreno. Imagen conceptual: las medidas y las prestaciones se comprobarán antes de fabricar.',
     details: ['Cintura alta propuesta', 'Largo al tobillo en el concepto', 'Marca discreta en la pierna'],
     fit: 'Corte ajustado propuesto.', care,
