@@ -4,9 +4,9 @@ const motionQuery = '(prefers-reduced-motion: reduce)';
 export function renderShooting() {
   const reduced = Boolean(globalThis.matchMedia?.(motionQuery).matches);
   return `<div class="hero-shooting" role="region" aria-label="Deporte en movimiento">
-    <video class="shooting-video" muted${reduced ? '' : ' autoplay'} loop playsinline preload="metadata" poster="assets/hero-spali-poster.jpg" aria-label="Deportistas de varias disciplinas en movimiento"><source src="assets/hero-spali.mp4" type="video/mp4"></video>
+    <video class="shooting-video" muted${reduced ? '' : ' autoplay'} loop playsinline preload="metadata" poster="assets/hero-spali-v2-poster.jpg" aria-label="Deportistas de varias disciplinas en movimiento"><source src="assets/hero-spali-v2.mp4" type="video/mp4"></video>
     <span class="shooting-caption">CADA PASO CUENTA.</span>
-    <span class="hero-signature"><img src="assets/logotipo-spali.svg" alt="SPALI" width="430" height="88"></span>
+    <span class="hero-signature"><img src="assets/logo-spali-stencil.svg" alt="SPALI SPORTS" width="584" height="122"></span>
     <div class="shooting-controls"><button class="shooting-pause" type="button" aria-label="${reduced ? 'Reproducir' : 'Pausar'} el vídeo" aria-pressed="${reduced}">${reduced ? 'Reproducir' : 'Pausar'}</button></div>
     <span class="shooting-status" role="status" aria-live="polite" aria-atomic="true"></span>
   </div>`;

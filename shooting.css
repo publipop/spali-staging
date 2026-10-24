@@ -9,8 +9,39 @@ html[data-style=caracter] .hero-shooting .hero-signature img{filter:invert(1)}
 .shooting-pause{min-width:86px;min-height:44px;border:1px solid #ffffff70;border-radius:0;padding:10px 12px;background:#14141499;color:#fff;font:500 10px var(--body-font,Arial,sans-serif);cursor:pointer;touch-action:manipulation}
 .shooting-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .shooting-controls button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+/* Carácter: the film fills the hero, with the message placed on top. */
+html[data-style=caracter] .home-hero.hero--video{min-height:clamp(580px,56.25vw,1080px);padding:0;color:#fff;background:#121412;isolation:isolate}
+.hero--video .hero-video-media{position:absolute;inset:0;z-index:0}
+.hero--video .hero-shooting:after{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(0,0,0,.76) 0%,rgba(0,0,0,.47) 35%,rgba(0,0,0,.08) 72%),linear-gradient(0deg,rgba(0,0,0,.3),transparent 50%);content:'';pointer-events:none}
+.hero--video .hero-video-content{position:relative;z-index:2;display:flex;align-items:center;min-height:inherit;pointer-events:none}
+.hero--video .hero-copy{max-width:660px;padding:60px 0 72px;pointer-events:auto}
+html[data-style=caracter] .hero--video .hero-kicker{color:#e8e5de;font-size:10px;letter-spacing:.16em}
+.hero--video .hero-copy h1{max-width:650px;margin-bottom:24px;font-size:clamp(64px,7.5vw,112px);line-height:.95;color:#fff;text-shadow:0 2px 30px #0003}
+.hero--video .hero-copy>p:not(.eyebrow):not(.hero-kicker):not(.hero-label){max-width:370px;color:#f0eee8;font-size:15px;line-height:1.65;text-shadow:0 1px 12px #0008}
+.hero--video .hero-fineprint{color:#e4e1da;font-size:10px}
+.hero--video .shooting-caption{display:none}
+.hero--video .hero-signature{top:30px;right:var(--gutter);width:110px}
+.hero--video .shooting-controls{right:var(--gutter);bottom:30px}
+@media(max-width:800px){
+ html[data-style=caracter] .home-hero.hero--video{min-height:620px}
+ .hero--video .hero-shooting:after{background:linear-gradient(90deg,#0009,#0003 90%),linear-gradient(0deg,#0009,transparent 80%)}
+ .hero--video .hero-copy{max-width:540px;padding-block:110px 76px}
+ .hero--video .hero-copy h1{font-size:clamp(64px,10vw,88px)}
+}
+@media(max-width:600px){
+ html[data-style=caracter] .home-hero.hero--video{min-height:clamp(560px,calc(100svh - 108px),760px)}
+ .hero--video .hero-video-content{align-items:flex-end}
+ .hero--video .hero-copy{padding:120px 0 100px;max-width:100%}
+ .hero--video .hero-copy h1{max-width:100%;font-size:clamp(58px,15.5vw,86px);margin-bottom:20px}
+ .hero--video .hero-copy>p:not(.eyebrow):not(.hero-kicker):not(.hero-label){max-width:290px;font-size:13px;line-height:1.6;margin-bottom:24px}
+ .hero--video .hero-kicker{margin-bottom:18px}
+ .hero--video .hero-fineprint{margin-top:26px;font-size:9px}
+ .hero--video .hero-signature{top:25px;right:var(--gutter);width:100px}
+ .hero--video .shooting-controls{right:var(--gutter);bottom:24px}
+ .hero--video .hero-shooting:after{background:linear-gradient(0deg,#000d 0%,#0008 35%,#0002 100%)}
+}
 .spali-wordmark{display:block;width:112px;height:auto;object-fit:contain}
-.product-image>.garment-mark-full{position:absolute;z-index:1;top:32%;left:58%;width:14%;height:auto;aspect-ratio:430/88;object-fit:contain;mix-blend-mode:normal;filter:invert(1)!important;transform:none!important;pointer-events:none}
+.product-image>.garment-mark-full{position:absolute;z-index:1;top:32%;left:58%;width:14%;height:auto;aspect-ratio:584/122;object-fit:contain;mix-blend-mode:normal;filter:invert(1)!important;transform:none!important;pointer-events:none}
 .product-image[data-color=Crema]>.garment-mark-full{filter:none!important}
 .product-image[data-garment=shorts]>.garment-mark-full{top:49%;left:62%;width:12%}
 .product-image[data-garment=tops]>.garment-mark-full{top:53%;left:55%;width:14%}
@@ -35,3 +66,5 @@ html[data-style=caracter] .line-card h3{max-width:260px;font-size:36px;line-heig
 html[data-style=caracter] .line-card-link{margin-top:15px;font-size:10px}
 @media(max-width:1000px){html[data-style=caracter] .line-card{height:420px}html[data-style=caracter] .line-card>div{padding:20px;min-height:175px}html[data-style=caracter] .line-card h3{font-size:31px}.shooting-caption{left:20px;bottom:32px;font-size:8px}.shooting-controls{right:14px;bottom:14px}}
 @media(max-width:600px){html[data-style=caracter] .line-card{height:440px}html[data-style=caracter] .line-card>div{padding:24px;min-height:165px}html[data-style=caracter] .line-card h3{font-size:38px}.hero-signature{top:22px;right:22px;width:100px}.shooting-caption{left:22px;bottom:32px;max-width:calc(100% - 140px)}.measure-figure>.spali-wordmark{left:calc(50% - 25px);width:50px}}
+
+.hero-word img{object-fit:contain}
