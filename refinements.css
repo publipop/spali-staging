@@ -1,0 +1,7 @@
+/* Ajustes de integración y accesibilidad posteriores a la hoja visual. */
+.skip-link{position:fixed;z-index:999;top:-100px;left:1rem;background:#fff;color:#111;padding:1rem}.skip-link:focus{top:1rem}
+.loading-screen{min-height:90vh;display:flex;flex-direction:column;align-items:center;justify-content:center;font:16px Arial,sans-serif;gap:24px}
+.filter-disclosure>summary{display:none;cursor:pointer;list-style:none;font-weight:650;font-size:12px}
+.filter-disclosure>summary::-webkit-details-marker{display:none}
+.filter-disclosure>summary .icon{width:18px;height:18px}
+@media(max-width:800px){.filters{display:block;padding-block:0;margin-bottom:22px}.filter-disclosure>summary{display:flex;align-items:center;gap:10px;padding:16px 0;border-bottom:1px solid var(--line)}.filter-disclosure>summary:after{content:'+';margin-left:auto}.filter-disclosure[open]>summary:after{content:'−'}.filter-disclosure[open]>form{padding-top:20px}.filters .filter-heading{display:none}.catalog-top{border-top:0}}
