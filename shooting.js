@@ -1,51 +1,172 @@
-const FRAMES = [
-  {src:'assets/shoot-running.jpg',alt:'Atleta corriendo en una pista de atletismo',label:'CADA PASO CUENTA.'},
-  {src:'assets/shoot-baloncesto.jpg',alt:'Jugadores de baloncesto en acción en una pista exterior',label:'EL EQUIPO TE MUEVE.'},
-  {src:'assets/shoot-tenis.jpg',alt:'Pareja de tenistas durante un punto de dobles',label:'COMPARTE TU JUEGO.'},
-  {src:'assets/shoot-ciclismo.jpg',alt:'Ciclistas pedaleando por una carretera abierta',label:'ENCUENTRA TU RITMO.'},
-];
+const mounted = new WeakMap();
+const motionQuery = '(prefers-reduced-motion: reduce)';
 
 export function renderShooting() {
-  return `<div class="hero-shooting" role="region" aria-roledescription="carrusel" aria-label="Deporte en movimiento">
-    <div class="shooting-frames">${FRAMES.map((f,i)=>`<figure class="shooting-frame ${i===0?'is-active':''}" aria-hidden="${i!==0}"><img src="${f.src}" alt="${f.alt}" width="1536" height="1024" ${i===0?'fetchpriority="high"':'loading="lazy"'}></figure>`).join('')}</div>
-    <span class="shooting-caption">${FRAMES[0].label}</span>
+  const reduced = Boolean(globalThis.matchMedia?.(motionQuery).matches);
+  return `<div class="hero-shooting" role="region" aria-label="Deporte en movimiento">
+    <video class="shooting-video" muted${reduced ? '' : ' autoplay'} loop playsinline preload="metadata" poster="assets/hero-spali-poster.jpg" aria-label="Deportistas de varias disciplinas en movimiento"><source src="assets/hero-spali.mp4" type="video/mp4"></video>
+    <span class="shooting-caption">CADA PASO CUENTA.</span>
     <span class="hero-signature"><img src="assets/logotipo-spali.svg" alt="SPALI" width="430" height="88"></span>
-    <div class="shooting-controls"><button class="shooting-pause" type="button" aria-label="Pausar las imágenes" aria-pressed="false">Pausa</button><div class="shooting-dots" role="group" aria-label="Elegir deporte">${FRAMES.map((f,i)=>`<button type="button" data-shooting-index="${i}" aria-label="${f.alt}" aria-pressed="${i===0}"><span></span></button>`).join('')}</div></div>
+    <div class="shooting-controls"><button class="shooting-pause" type="button" aria-label="${reduced ? 'Reproducir' : 'Pausar'} el vídeo" aria-pressed="${reduced}">${reduced ? 'Reproducir' : 'Pausar'}</button></div>
+    <span class="shooting-status" role="status" aria-live="polite" aria-atomic="true"></span>
   </div>`;
 }
 
-export function mountShooting(root=document) {
-  const carousel=root.querySelector('.hero-shooting');
-  if(!carousel)return ()=>{};
-  const frames=[...carousel.querySelectorAll('.shooting-frame')];
-  const dots=[...carousel.querySelectorAll('[data-shooting-index]')];
-  const pause=carousel.querySelector('.shooting-pause');
-  const caption=carousel.querySelector('.shooting-caption');
-  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
-  const abort=new AbortController();
-  let index=0,timer,visible=true,hovered=false,focused=false,paused=motion.matches;
-  const stop=()=>{clearTimeout(timer);timer=undefined;};
-  const schedule=()=>{
+/** Playback follows visibility; only an explicit play action clears a user pause. */
+export function mountShooting(root = globalThis.document) {
+  const hero = root?.matches?.('.hero-shooting') ? root : root?.querySelector?.('.hero-shooting');
+  const video = hero?.querySelector('.shooting-video');
+  const button = hero?.querySelector('.shooting-pause');
+  if (!video || !button) return () => {};
+  mounted.get(video)?.();
+  const doc = hero.ownerDocument || root;
+  const view = doc.defaultView || globalThis;
+  const motion = view.matchMedia?.(motionQuery);
+  const status = hero.querySelector('.shooting-status');
+  const listeners = [];
+  let alive = true;
+  let userPaused = false;
+  let reducedMotionConsent = false;
+  let blocked = false;
+  let pending = false;
+  let generation = 0;
+  let observer;
+
+  const inViewport = () => {
+    const box = hero.getBoundingClientRect();
+    return box.width > 0 && box.height > 0 && box.bottom > 0 && box.right > 0
+      && box.top < (view.innerHeight || 800) && box.left < (view.innerWidth || 1280);
+  };
+  let visible = inViewport();
+  const shouldPlay = () => alive && hero.isConnected && visible && !doc.hidden && !userPaused
+    && !blocked && (!motion?.matches || reducedMotionConsent);
+  const syncButton = () => {
+    const playing = shouldPlay() && (pending || !video.paused);
+    button.textContent = playing ? 'Pausar' : 'Reproducir';
+    button.setAttribute('aria-label', `${playing ? 'Pausar' : 'Reproducir'} el vídeo`);
+    button.setAttribute('aria-pressed', String(!playing));
+  };
+  const listen = (target, type, handler, options) => {
+    target.addEventListener(type, handler, options);
+    listeners.push(() => target.removeEventListener(type, handler, options));
+  };
+  const stop = () => {
+    generation += 1;
+    pending = false;
+    video.pause();
+  };
+  const rejectPlayback = (attempt) => {
+    if (!alive || attempt !== generation) return;
+    blocked = true;
     stop();
-    if(paused||hovered||focused||!visible||document.hidden||motion.matches)return;
-    timer=setTimeout(()=>{show((index+1)%frames.length);schedule();},9000);
+    if (status) status.textContent = 'Pulsa Reproducir para iniciar el vídeo.';
+    syncButton();
   };
-  const show=next=>{
-    index=next;
-    frames.forEach((frame,i)=>{frame.classList.toggle('is-active',i===index);frame.setAttribute('aria-hidden',String(i!==index));});
-    dots.forEach((dot,i)=>dot.setAttribute('aria-pressed',String(i===index)));
-    caption.textContent=FRAMES[index].label;
+  const reconcile = () => {
+    const wanted = shouldPlay();
+    // Native autoplay is disabled whenever playback is not eligible, including reduced motion.
+    video.autoplay = wanted && !motion?.matches;
+    if (!wanted) {
+      stop();
+      syncButton();
+      return;
+    }
+    if (pending || !video.paused) {
+      syncButton();
+      return;
+    }
+    pending = true;
+    const attempt = ++generation;
+    syncButton();
+    try {
+      Promise.resolve(video.play()).then(() => {
+        if (!alive) {
+          // A stale play promise must not restart a detached video or pause a new controller.
+          if (!mounted.has(video)) video.pause();
+          return;
+        }
+        if (attempt !== generation) {
+          if (!shouldPlay()) video.pause();
+          return;
+        }
+        pending = false;
+        if (!shouldPlay()) video.pause();
+        if (status && !video.paused) status.textContent = '';
+        syncButton();
+      }, () => rejectPlayback(attempt));
+    } catch {
+      rejectPlayback(attempt);
+    }
   };
-  const syncPause=()=>{pause.textContent=paused?'Reproducir':'Pausa';pause.setAttribute('aria-pressed',String(paused));pause.setAttribute('aria-label',paused?'Reproducir las imágenes':'Pausar las imágenes');schedule();};
-  pause.addEventListener('click',()=>{paused=!paused;syncPause();},{signal:abort.signal});
-  dots.forEach(dot=>dot.addEventListener('click',()=>{show(Number(dot.dataset.shootingIndex));schedule();},{signal:abort.signal}));
-  carousel.addEventListener('mouseenter',()=>{hovered=true;stop();},{signal:abort.signal});
-  carousel.addEventListener('mouseleave',()=>{hovered=false;schedule();},{signal:abort.signal});
-  carousel.addEventListener('focusin',()=>{focused=true;stop();},{signal:abort.signal});
-  carousel.addEventListener('focusout',event=>{if(!carousel.contains(event.relatedTarget)){focused=false;schedule();}},{signal:abort.signal});
-  document.addEventListener('visibilitychange',schedule,{signal:abort.signal});
-  motion.addEventListener('change',()=>{paused=motion.matches;syncPause();},{signal:abort.signal});
-  const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;schedule();},{threshold:0.1});
-  observer.observe(carousel);syncPause();
-  return ()=>{stop();observer.disconnect();abort.abort();};
+
+  video.muted = true;
+  video.defaultMuted = true;
+  video.loop = true;
+  video.playsInline = true;
+  listen(button, 'click', () => {
+    if (shouldPlay() && (pending || !video.paused)) userPaused = true;
+    else {
+      userPaused = false;
+      reducedMotionConsent = true;
+      blocked = false;
+      if (status) status.textContent = '';
+      // A failed media load can be retried by the same visible control.
+      if (video.error) video.load();
+    }
+    reconcile();
+  });
+  listen(video, 'play', () => {
+    if (!shouldPlay()) video.pause();
+    syncButton();
+  });
+  listen(video, 'playing', () => {
+    if (!shouldPlay()) video.pause();
+    else if (status) status.textContent = '';
+    syncButton();
+  });
+  listen(video, 'pause', syncButton);
+  listen(video, 'error', () => {
+    blocked = true;
+    stop();
+    if (status) status.textContent = 'No se ha podido reproducir el vídeo. Puedes volver a intentarlo.';
+    syncButton();
+  });
+  listen(doc, 'visibilitychange', reconcile);
+  const onMotionChange = () => {
+    reducedMotionConsent = false;
+    reconcile();
+  };
+  if (motion?.addEventListener) listen(motion, 'change', onMotionChange);
+  else if (motion?.addListener) {
+    motion.addListener(onMotionChange);
+    listeners.push(() => motion.removeListener(onMotionChange));
+  }
+
+  if (view.IntersectionObserver) {
+    observer = new view.IntersectionObserver((entries) => {
+      if (!alive) return;
+      const entry = entries.find((item) => item.target === hero);
+      if (!entry) return;
+      visible = entry.isIntersecting && entry.intersectionRatio >= 0.1;
+      reconcile();
+    }, { threshold: [0, 0.1] });
+    observer.observe(hero);
+  } else {
+    const onViewportChange = () => { visible = inViewport(); reconcile(); };
+    listen(view, 'scroll', onViewportChange, { passive: true });
+    listen(view, 'resize', onViewportChange, { passive: true });
+  }
+
+  const cleanup = () => {
+    if (!alive) return;
+    alive = false;
+    video.autoplay = false;
+    stop();
+    observer?.disconnect();
+    listeners.forEach((remove) => remove());
+    if (mounted.get(video) === cleanup) mounted.delete(video);
+  };
+  mounted.set(video, cleanup);
+  reconcile();
+  return cleanup;
 }

@@ -1,6 +1,6 @@
 import { PRODUCTS, SIZE_GUIDE, fmtPrice, normalizeCart, addItem, updateQuantity, removeItem, cartSummary, prepareOrder } from './commerce.js';
 
-import { renderShooting, mountShooting } from './shooting.js';
+import { renderShooting, mountShooting } from './shooting.js?v=20261024-7';
 import { renderProductSlides, mountProductSlides, getProductVariantImage } from './product-slides.js?v=20261024-4';
 
 const app = document.querySelector('#app');

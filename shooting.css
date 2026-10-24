@@ -1,20 +1,13 @@
 .hero-shooting{position:absolute;inset:0;isolation:isolate;background:#202220;color:#fff}
-.shooting-frames,.shooting-frame{position:absolute;inset:0;margin:0;overflow:hidden}
-.shooting-frame{opacity:0;transition:opacity 2.2s cubic-bezier(.45,0,.2,1);pointer-events:none}
-.shooting-frame.is-active{opacity:1;z-index:1}
-.shooting-frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1);transition:transform 11s linear}
-.shooting-frame.is-active img{transform:scale(1.045)}
+.shooting-video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center;filter:grayscale(1)}
 .hero-shooting:after{position:absolute;inset:45% 0 0;z-index:2;background:linear-gradient(transparent,#0008);content:'';pointer-events:none}
-.shooting-caption{position:absolute;z-index:3;bottom:26px;left:26px;max-width:55%;font-size:9px;font-weight:650;letter-spacing:.1em;text-shadow:0 1px 10px #0006}
+.shooting-caption{position:absolute;z-index:3;bottom:34px;left:26px;max-width:calc(100% - 145px);font-size:9px;font-weight:650;letter-spacing:.1em;text-shadow:0 1px 10px #0006}
 .hero-signature{position:absolute;z-index:3;top:26px;right:26px;width:105px}
 .hero-signature img{display:block;width:100%;height:auto;filter:invert(1)}
 html[data-style=caracter] .hero-shooting .hero-signature img{filter:invert(1)}
-.shooting-controls{position:absolute;z-index:3;bottom:17px;right:16px;display:flex;align-items:center;gap:6px}
-.shooting-pause{min-width:54px;min-height:36px;border:0;padding:8px;background:#14141466;color:#fff;font:500 9px var(--body-font,Arial,sans-serif);cursor:pointer}
-.shooting-dots{display:flex;gap:0}
-.shooting-dots button{display:grid;place-items:center;width:27px;height:36px;padding:0;border:0;background:transparent;color:#fff;cursor:pointer}
-.shooting-dots span{display:block;width:5px;height:5px;border:1px solid #fff;border-radius:50%;transition:background .4s}
-.shooting-dots [aria-pressed=true] span{background:#fff}
+.shooting-controls{position:absolute;z-index:3;bottom:17px;right:18px;display:flex;align-items:center}
+.shooting-pause{min-width:86px;min-height:44px;border:1px solid #ffffff70;border-radius:0;padding:10px 12px;background:#14141499;color:#fff;font:500 10px var(--body-font,Arial,sans-serif);cursor:pointer;touch-action:manipulation}
+.shooting-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .shooting-controls button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .spali-wordmark{display:block;width:112px;height:auto;object-fit:contain}
 .product-image>.garment-mark-full{position:absolute;z-index:1;top:32%;left:58%;width:14%;height:auto;aspect-ratio:430/88;object-fit:contain;mix-blend-mode:normal;filter:invert(1)!important;transform:none!important;pointer-events:none}
@@ -40,6 +33,5 @@ html[data-style=caracter] .line-card>div{right:0;bottom:0;left:0;padding:24px;ba
 html[data-style=caracter] .line-card .eyebrow{margin-bottom:10px;font-size:9px;letter-spacing:.1em}
 html[data-style=caracter] .line-card h3{max-width:260px;font-size:36px;line-height:1.04;letter-spacing:-.015em}
 html[data-style=caracter] .line-card-link{margin-top:15px;font-size:10px}
-@media(max-width:1000px){html[data-style=caracter] .line-card{height:420px}html[data-style=caracter] .line-card>div{padding:20px;min-height:175px}html[data-style=caracter] .line-card h3{font-size:31px}.shooting-caption{left:20px;bottom:25px;font-size:8px;max-width:40%}.shooting-controls{right:10px;bottom:14px}.shooting-dots button{width:24px}}
-@media(max-width:600px){html[data-style=caracter] .line-card{height:440px}html[data-style=caracter] .line-card>div{padding:24px;min-height:165px}html[data-style=caracter] .line-card h3{font-size:38px}.hero-signature{top:22px;right:22px;width:100px}.shooting-caption{left:22px;bottom:28px;max-width:42%}.measure-figure>.spali-wordmark{left:calc(50% - 25px);width:50px}}
-@media(prefers-reduced-motion:reduce){.shooting-pause{display:none}.shooting-frame,.shooting-frame img,.shooting-dots span{transition:none}.shooting-frame.is-active img{transform:none}}
+@media(max-width:1000px){html[data-style=caracter] .line-card{height:420px}html[data-style=caracter] .line-card>div{padding:20px;min-height:175px}html[data-style=caracter] .line-card h3{font-size:31px}.shooting-caption{left:20px;bottom:32px;font-size:8px}.shooting-controls{right:14px;bottom:14px}}
+@media(max-width:600px){html[data-style=caracter] .line-card{height:440px}html[data-style=caracter] .line-card>div{padding:24px;min-height:165px}html[data-style=caracter] .line-card h3{font-size:38px}.hero-signature{top:22px;right:22px;width:100px}.shooting-caption{left:22px;bottom:32px;max-width:calc(100% - 140px)}.measure-figure>.spali-wordmark{left:calc(50% - 25px);width:50px}}
